@@ -13,6 +13,8 @@ app.use(express.static('public'));
 app.get('/', function (req, res) {
   fs.readdir('./public/uploads', function (err, items) {
     console.log(items)
+
+   const newItems = items.map(item => `<img src=/uploads/${item}>`) 
     res.send(
     `<!DOCTYPE html>
     <html lang="en">
@@ -24,26 +26,24 @@ app.get('/', function (req, res) {
     </head>
     <body>
     
-            <form action="/" method="POST" enctype="multipart/form-data">
+            <form action="/upload" method="POST" enctype="multipart/form-data">
                 Select an image to upload:
                 <input type="file" name="image"> 
                 <input type="submit" value="uploads"> 
                 <input type="button" value="home">
                 </form>
                 
-                <img src="/uploads/${items[0]}"  >
+                    ${newItems.join('')}
                 
         <script src="main.js"></script>
     </body>
     </html>`
   
-  
-  
   );
   })
 })
 
-app.post('/', upload.single('image'), function (request, response, next) {
+app.post('/upload', upload.single('image'), function (request, response, next) {
   // request.file is the `myFile` file
   // request.body will hold the text fields, if there were any
   let file = request.file.filename
@@ -58,16 +58,11 @@ app.post('/', upload.single('image'), function (request, response, next) {
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
           <title>Document</title>
       </head>
-      <body>
+      <body><p>uploaded image</p>
+        <a href="/">home</a>
+            
       
-              <form action="/" method="POST" enctype="multipart/form-data">
-                  Select an image to upload:
-                  <input type="file" name="image"> 
-                  <input type="submit" value="uploads"> 
-                  <input type="button" value="home">
-                  </form>
-                  
-                  <img src="${file}"  >
+      <img src="/uploads/${file}"  >
                   
           <script src="main.js"></script>
       </body>
